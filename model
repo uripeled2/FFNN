@@ -1,0 +1,67 @@
+import numpy as np
+import random
+
+random.seed(1)
+
+
+class Neuron:
+    # TODO add activation function
+    def __init__(self, bias, weights):
+        self.bias = bias
+        self.weights = weights
+
+    def calculate(self, inputs):
+        return np.dot(self.weights, inputs) + self.bias
+
+
+class Layer:
+    # TODO add flatten layer
+    def __init__(self, size: int, before_size: int):
+        self.lst = []
+        self.size = size
+        self.next = None
+        for _ in range(size):
+            self.lst.append(Neuron(random.randrange(10), [random.randrange(10) for _ in range(before_size)]))
+
+    def calculate(self, inputs):
+        return [neuron.calculate(inputs) for i, neuron in enumerate(self.lst)]
+
+
+class Model:
+
+    def __init__(self, input_shape):
+        self.first = input_shape
+        self.lst = []
+
+    def add(self, num):
+        self.lst.append(Layer(num, self.lst[-1].size if len(self.lst) != 0 else self.first))
+
+    def predict(self, inputs):
+        """
+        :param inputs: [[x], [x] ...]
+        :return: [[output], [output] ...]
+        """
+        lst = [[]]
+        for i, input in enumerate(inputs):
+            lst.append([]) if i != 0 else None
+            for layer in self.lst:
+                input = layer.calculate(input)
+            lst[i] = input
+        return lst
+
+
+model = Model(4)
+model.add(3)
+model.add(2)
+print(model.predict([[1.0, 2.0, 3.0, 2.5], [2.0, 4.0, 6.0, 5.0]]))
+
+
+
+
+
+
+
+
+
+
+
